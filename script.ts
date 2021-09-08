@@ -3,15 +3,13 @@ import { PrismaClient } from '@prisma/client'
 const prisma = new PrismaClient()
 
 const main = async () => {
-  const reservations = await prisma.reservation.findMany({
+  const accounts = await prisma.account.findMany({
     where: {
-      price: {
-        gte: 300,
-      },
+      isActive: true,
     },
   })
 
-  console.log('Expensive reservations: ', reservations)
+  console.log('Premium accounts: ', accounts)
 }
 
 main()
