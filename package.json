@@ -1,5 +1,5 @@
 {
-  "name": "url-shortener",
+  "name": "saas",
   "license": "UNLICENSED",
   "devDependencies": {
     "@types/faker": "5.5.6",
