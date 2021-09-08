@@ -1,5 +1,5 @@
 {
-  "name": "music-streaming-service",
+  "name": "rentals-platform",
   "license": "UNLICENSED",
   "devDependencies": {
     "@types/faker": "5.5.6",
