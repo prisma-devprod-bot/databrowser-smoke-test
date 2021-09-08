@@ -3,15 +3,15 @@ import { PrismaClient } from '@prisma/client'
 const prisma = new PrismaClient()
 
 const main = async () => {
-  const albums = await prisma.album.findMany({
+  const reservations = await prisma.reservation.findMany({
     where: {
-      name: {
-        contains: ' '
-      }
-    }
+      price: {
+        gte: 300,
+      },
+    },
   })
 
-  console.log('Albums that have more than 1 word: ', albums)
+  console.log('Expensive reservations: ', reservations)
 }
 
 main()
