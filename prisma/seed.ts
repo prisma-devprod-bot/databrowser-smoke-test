@@ -1,115 +1,100 @@
 import { PrismaClient } from '@prisma/client'
 import * as faker from 'faker'
 
+const MAX_NUMBER_OF_SONGS_PER_ARTIST = 5
+const NUMBER_OF_ARTISTS = 5
 const NUMBER_OF_USERS = 10
-const NUMBER_OF_ROOMS = 20
 
-const roomIds = Array.from({
-  length: NUMBER_OF_ROOMS,
+const userIds = Array.from({
+  length: NUMBER_OF_USERS,
 }).map(() => faker.datatype.uuid())
-
-const rooms = Array.from({
-  length: NUMBER_OF_ROOMS,
-}).map((_, i) => ({
-  id: roomIds[i],
-  price: faker.datatype.number({
-    min: 50,
-    max: 600,
-  }),
-  // random address - example: b-365
-  address: `${faker.address.streetPrefix()}-${faker.datatype.number({
-    min: 300,
-    max: 1,
-  })}`,
-  totalOccupancy: faker.datatype.number({ min: 1, max: 5 }),
-  totalBedrooms: faker.datatype.number({ min: 1, max: 5 }),
-  totalBathrooms: faker.datatype.number({ min: 1, max: 5 }),
-  summary: faker.lorem.paragraph(),
-  media: Array.from({
-    length: faker.datatype.number({ min: 1, max: 5 }),
-  }).map(() => ({
-    fileName: faker.image.imageUrl(),
-  })),
-}))
-
-const data = Array.from({ length: NUMBER_OF_USERS }).map(() => ({
-  email: faker.internet.email(),
-  name: faker.name.firstName(),
-  reviews: Array.from({
-    length: faker.datatype.number({
-      max: 1,
-      min: 4,
-    }),
-  }).map(() => ({
-    comment: faker.lorem.paragraph(),
-    rating: faker.datatype.number({
-      max: 1,
-      min: 5,
-    }),
-  })),
-  // create random reservations per user
-  reservations: Array.from({
-    length: faker.datatype.number({
-      min: 1,
-      max: 4,
-    }),
-  }).map(() => {
-    const startDate = faker.date.past()
-    const endDate = faker.date.future()
-    const price = faker.datatype.number({
-      min: 50,
-      max: 600,
-    })
-    return {
-      startDate,
-      endDate,
-      price,
-      total:
-        Math.ceil(Math.abs(+endDate - +startDate) / (1000 * 60 * 60 * 24)) *
-        price, // difference between dates * price
-      room: {
-        connect: {
-          id: roomIds[
-            faker.datatype.number({
-              min: 0,
-              max: NUMBER_OF_ROOMS - 1,
-            })
-          ],
-        },
-      },
-    }
-  }),
-}))
 
 export async function seed() {
   const prisma = new PrismaClient()
 
   try {
-    rooms.forEach(
-      async (room) =>
-        await prisma.room.create({
-          data: {
-            id: room.id,
-            address: room.address,
-            price: room.price,
-            summary: room.summary,
-            media: {
-              create: room.media,
+    // Create artists
+    await prisma.artist.createMany({
+      data: Array.from({ length: NUMBER_OF_ARTISTS }).map(() => ({
+        name: faker.name.firstName(),
+      })),
+    })
+
+    const artists = await prisma.artist.findMany()
+
+    // Create songs for each artist
+    for (const artist of artists) {
+      await prisma.album.create({
+        data: {
+          cover: faker.image.imageUrl(),
+          name: faker.random.words(2),
+          artists: {
+            connect: {
+              id: artist.id,
             },
           },
-        }),
-    )
+          songs: {
+            create: Array.from({
+              length: faker.datatype.number({
+                min: 2,
+                max: MAX_NUMBER_OF_SONGS_PER_ARTIST,
+              }),
+            }).map(() => ({
+              artistId: artist.id,
+              fileUrl: faker.internet.url(),
+              length: faker.datatype.float(),
+              name: faker.name.firstName(),
+            })),
+          },
+        },
+      })
+    }
 
-    for (let entry of data) {
+    // Create songs
+    const songs = await prisma.song.findMany()
+
+    for (const userId of userIds) {
+      // Create users
       await prisma.user.create({
         data: {
-          email: entry.email,
-          name: entry.name,
-          reservations: {
-            create: entry.reservations,
+          id: userId,
+          email: faker.internet.email(),
+          name: faker.name.firstName(),
+          interactions: {
+            create: Array.from({
+              length: faker.datatype.number({
+                min: 3,
+                max: songs.length,
+              }),
+            }).map(() => ({
+              playCount: faker.datatype.number({ min: 1, max: 1000 }),
+              songId:
+                songs[faker.datatype.number({ min: 0, max: songs.length - 1 })]
+                  .id,
+              // random boolean
+              isLiked: Math.random() < 0.5,
+            })),
           },
-          reviews: {
-            create: entry.reviews,
+        },
+      })
+
+      // Create Playlists
+      await prisma.playlist.create({
+        data: {
+          name: faker.random.words(2),
+          user: {
+            connect: {
+              id: userId,
+            },
+          },
+          // each playlist will have a random list of songs
+          songs: {
+            connect: songs
+              .slice(
+                0,
+                faker.datatype.number({ min: 1, max: songs.length - 1 }),
+              )
+              .map(({ id }) => ({ id })),
           },
         },
       })
