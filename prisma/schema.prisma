@@ -1,7 +1,7 @@
 // An empty Prisma Schema with no models, perfect as a starting point for your own schema.
 
 datasource db {
-  provider = "postgresql"
+  provider = "mysql"
   url      = env("DATABASE_URL")
 }
 
