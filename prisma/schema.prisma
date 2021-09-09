@@ -2,12 +2,13 @@
 // This service tracks existing users & their accounts, as well as invites for users who haven't joined yet
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlserver"
   url      = env("DATABASE_URL")
 }
 
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["microsoftSqlServer"]
 }
 
 model User {
