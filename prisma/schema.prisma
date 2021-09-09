@@ -2,7 +2,7 @@
 // This service contains songs, albums, artists & playlists, and tracks user interactions with each of them
 
 datasource db {
-  provider = "postgresql"
+  provider = "mysql"
   url      = env("DATABASE_URL")
 }
 
