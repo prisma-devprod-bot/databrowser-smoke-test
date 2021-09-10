@@ -3,15 +3,15 @@ import { PrismaClient } from '@prisma/client'
 const prisma = new PrismaClient()
 
 const main = async () => {
-  const users = await prisma.user.findMany({
+  const reservations = await prisma.reservation.findMany({
     where: {
-      name: {
-        startsWith: 'A',
+      price: {
+        gte: 300,
       },
     },
   })
 
-  console.log('Top users (alphabetical): ', users)
+  console.log('Expensive reservations: ', reservations)
 }
 
 main()
