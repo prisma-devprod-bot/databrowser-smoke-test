@@ -2,7 +2,7 @@
 // This schema tracks short links by associating them to a user
 
 datasource db {
-  provider = "mysql"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
