@@ -1,6 +1,8 @@
-# Music Streaming Service
+# SaaS
 
-![Database diagram](https://raw.githubusercontent.com/prisma/prisma-schema-examples/main/musicStreamingService/diagram.png)
+Generic Prisma schema example for a SaaS that has a referral system.
+
+![Database diagram](https://raw.githubusercontent.com/prisma/prisma-schema-examples/main/saas/diagram.png)
 
 (Generated via https://github.com/notiz-dev/prisma-dbml-generator + https://dbdiagram.io)
 
