@@ -1,6 +1,6 @@
-# Rentals Platform
+# URL Shortener
 
-![Database Diagram](https://github.com/prisma/prisma-schema-examples/blob/cloud/rentalsPlatform/diagram.png?raw=true)
+![Database diagram](https://raw.githubusercontent.com/prisma/prisma-schema-examples/main/urlShortener/diagram.png)
 
 (Generated via https://github.com/notiz-dev/prisma-dbml-generator + https://dbdiagram.io)
 
@@ -15,4 +15,4 @@ Once you clone your repo, you'll want to set up this repo for local development.
    - [Read more about the Prisma Schema](https://www.prisma.io/docs/concepts/components/prisma-schema)
    - [Read more about database seeding](https://www.prisma.io/docs/guides/database/seed-database)
 
-To learn more about Prisma, we recommend reading through our [Getting Started guide](https://www.prisma.io/docs/getting-started
+To learn more about Prisma, we recommend reading through our [Getting Started guide](https://www.prisma.io/docs/getting-started)
