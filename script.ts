@@ -3,15 +3,15 @@ import { PrismaClient } from '@prisma/client'
 const prisma = new PrismaClient()
 
 const main = async () => {
-  const albums = await prisma.album.findMany({
+  const users = await prisma.user.findMany({
     where: {
       name: {
-        contains: ' '
-      }
-    }
+        startsWith: 'A',
+      },
+    },
   })
 
-  console.log('Albums that have more than 1 word: ', albums)
+  console.log('Top users (alphabetical): ', users)
 }
 
 main()

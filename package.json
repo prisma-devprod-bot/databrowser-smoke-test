@@ -1,5 +1,5 @@
 {
-  "name": "music-streaming-service",
+  "name": "url-shortener",
   "license": "UNLICENSED",
   "devDependencies": {
     "@types/faker": "5.5.6",
