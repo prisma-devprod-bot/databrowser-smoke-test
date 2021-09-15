@@ -1,4 +1,5 @@
-// An empty Prisma Schema with no models, perfect as a starting point for your own schema.
+// Schema for an identity service for a SaaS
+// This service tracks existing users & their accounts, as well as invites for users who haven't joined yet
 
 datasource db {
   provider = "sqlserver"
@@ -8,4 +9,36 @@ datasource db {
 generator client {
   provider = "prisma-client-js"
   previewFeatures = ["microsoftSqlServer"]
+}
+
+model User {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  name      String?
+  email     String
+  account   Account? @relation(fields: [accountId], references: [id])
+  accountId String?
+}
+
+model Account {
+  id                   String   @id @default(uuid())
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+  invites              Invite[]
+  users                User[]
+  stripeCustomerId     String
+  stripeSubscriptionId String
+  referrer             String?
+  isActive             Boolean
+
+}
+
+model Invite {
+  id        String   @id @default(uuid())
+  dateSent  DateTime @default(now())
+  email     String
+  account   Account? @relation(fields: [accountId], references: [id])
+  accountId String?
+  isValid   Boolean  @default(true)
 }
