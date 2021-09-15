@@ -2,13 +2,12 @@
 // This schema tracks short links by associating them to a user
 
 datasource db {
-  provider = "sqlserver"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
 generator client {
   provider = "prisma-client-js"
-  previewFeatures = ["microsoftSqlServer"]
 }
 
 model Link {
