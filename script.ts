@@ -3,15 +3,13 @@ import { PrismaClient } from '@prisma/client'
 const prisma = new PrismaClient()
 
 const main = async () => {
-  const users = await prisma.user.findMany({
+  const accounts = await prisma.account.findMany({
     where: {
-      name: {
-        startsWith: 'A',
-      },
+      isActive: true,
     },
   })
 
-  console.log('Top users (alphabetical): ', users)
+  console.log('Premium accounts: ', accounts)
 }
 
 main()
