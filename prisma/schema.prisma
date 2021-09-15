@@ -1,44 +1,74 @@
-// Schema for an identity service for a SaaS
-// This service tracks existing users & their accounts, as well as invites for users who haven't joined yet
+// Schema for a fictional hotel
+// This hotel tracks rooms, user reservations & reviews
 
 datasource db {
-  provider = "sqlserver"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
 generator client {
   provider = "prisma-client-js"
-  previewFeatures = ["microsoftSqlServer"]
 }
 
 model User {
+  id           String        @id @default(uuid())
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  email        String        @unique
+  name         String
+  reservations Reservation[]
+  reviews      Review[]
+}
+
+model Reservation {
   id        String   @id @default(uuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  name      String?
-  email     String
-  account   Account? @relation(fields: [accountId], references: [id])
-  accountId String?
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id])
+  startDate DateTime
+  endDate   DateTime
+  price     Int
+  total     Int
+  room      Room?    @relation(fields: [roomId], references: [id])
+  roomId    String?
 }
 
-model Account {
-  id                   String   @id @default(uuid())
-  createdAt            DateTime @default(now())
-  updatedAt            DateTime @updatedAt
-  invites              Invite[]
-  users                User[]
-  stripeCustomerId     String
-  stripeSubscriptionId String
-  referrer             String?
-  isActive             Boolean
+model Room {
+  id                 String        @id @default(uuid())
+  createdAt          DateTime      @default(now())
+  updatedAt          DateTime      @updatedAt
+  reservations       Reservation[]
+  totalOccupancy     Int           @default(5)
+  totalBedrooms      Int           @default(5)
+  totalBathrooms     Int           @default(5)
+  summary            String?
+  address            String
+  isSmoking          Boolean       @default(false)
+  hasTV              Boolean       @default(true)
+  hasAirConditioning Boolean       @default(true)
+  hasHeating         Boolean       @default(true)
+  hasWIFI            Boolean       @default(true)
+  price              Int
+  media              Media[]
 
 }
 
-model Invite {
+model Review {
   id        String   @id @default(uuid())
-  dateSent  DateTime @default(now())
-  email     String
-  account   Account? @relation(fields: [accountId], references: [id])
-  accountId String?
-  isValid   Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  rating    Int
+  comment   String
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+}
+
+model Media {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  room      Room?    @relation(fields: [roomId], references: [id])
+  roomId    String?
+  fileName  String
 }
