@@ -4,19 +4,21 @@ import faker from 'faker'
 const prisma = new PrismaClient()
 
 const NUMBER_OF_USERS = 4
-const MAX_NUMBER_OF_LINKS = 5
+const NUMBER_OF_INVITES = 4
 
 const data = Array.from({ length: NUMBER_OF_USERS }).map(() => ({
   email: faker.internet.email(),
   name: faker.name.firstName(),
-  links: Array.from({
-    length: faker.datatype.number({
-      min: 0,
-      max: MAX_NUMBER_OF_LINKS,
-    }),
+  account: {
+    stripeCustomerId: faker.datatype.uuid(),
+    stripeSubscriptionId: faker.datatype.uuid(),
+    isActive: true,
+  },
+  invites: Array.from({
+    length: faker.datatype.number({ min: 0, max: NUMBER_OF_INVITES }),
   }).map(() => ({
-    url: faker.internet.url(),
-    shortUrl: faker.internet.domainWord(),
+    email: faker.internet.email(),
+    dateSent: faker.date.future(),
   })),
 }))
 
@@ -26,8 +28,15 @@ async function main() {
       data: {
         name: entry.name,
         email: entry.email,
-        links: {
-          create: entry.links,
+        account: {
+          create: {
+            stripeCustomerId: entry.account.stripeCustomerId,
+            stripeSubscriptionId: entry.account.stripeSubscriptionId,
+            isActive: true,
+            invites: {
+              create: entry.invites,
+            },
+          },
         },
       },
     })
